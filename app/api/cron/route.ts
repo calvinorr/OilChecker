@@ -156,6 +156,9 @@ export async function GET(request: NextRequest) {
     const previousPrice = previousRecord
       ? parseFloat(previousRecord.cheapestPrice500L)
       : null;
+    const previousPpl = previousRecord
+      ? parseFloat(previousRecord.cheapestPpl)
+      : null;
 
     // Insert into database
     const [inserted] = await db
@@ -172,15 +175,17 @@ export async function GET(request: NextRequest) {
       })
       .returning();
 
-    // Check if we should send email alert
-    const priceThreshold = parseFloat(process.env.PRICE_THRESHOLD || "300");
-    let emailStatus: { sent: boolean; messageId?: string; error?: string } = {
+    // Check if we should send email alert (based on ppl change > 5p)
+    const pplThreshold = parseFloat(process.env.PPL_CHANGE_THRESHOLD || "5");
+    let emailStatus: { sent: boolean; messageId?: string; error?: string; reason?: string } = {
       sent: false,
     };
 
-    if (shouldSendAlert(cheapestPrice500L, previousPrice, priceThreshold)) {
+    const alertCheck = shouldSendAlert(cheapestPpl, previousPpl, pplThreshold);
+
+    if (alertCheck.shouldSend) {
       console.log(
-        `Price alert triggered: £${cheapestPrice500L} (threshold: £${priceThreshold}, previous: £${previousPrice})`
+        `Price alert triggered: ${cheapestPpl}p/L (previous: ${previousPpl}p/L, change: ${alertCheck.change?.toFixed(1)}p, reason: ${alertCheck.reason})`
       );
 
       // Sort suppliers by price to get top 5
@@ -201,6 +206,7 @@ export async function GET(request: NextRequest) {
         sent: emailResult.success,
         messageId: emailResult.messageId,
         error: emailResult.error,
+        reason: alertCheck.reason,
       };
 
       if (emailResult.success) {
@@ -209,8 +215,9 @@ export async function GET(request: NextRequest) {
         console.log(`Email alert failed: ${emailResult.error}`);
       }
     } else {
+      emailStatus.reason = alertCheck.reason;
       console.log(
-        `No price alert needed: £${cheapestPrice500L} (threshold: £${priceThreshold}, previous: £${previousPrice})`
+        `No alert needed: ${cheapestPpl}p/L (previous: ${previousPpl}p/L, threshold: ${pplThreshold}p change)`
       );
     }
 
@@ -227,6 +234,8 @@ export async function GET(request: NextRequest) {
         cheapestPpl,
         topSuppliers: suppliers.slice(0, 5),
         previousPrice,
+        previousPpl,
+        pplChange: alertCheck.change,
         emailAlert: emailStatus,
       },
     });

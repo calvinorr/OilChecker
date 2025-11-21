@@ -248,19 +248,27 @@ export async function sendPriceAlert(data: PriceAlertData): Promise<{
 }
 
 export function shouldSendAlert(
-  currentPrice: number,
-  previousPrice: number | null,
-  threshold: number
-): boolean {
-  // Send alert if price is below threshold
-  if (currentPrice < threshold) {
-    return true;
+  currentPpl: number,
+  previousPpl: number | null,
+  pplChangeThreshold: number = 5
+): { shouldSend: boolean; reason: string; change: number | null } {
+  if (previousPpl === null) {
+    // First record - send alert to confirm setup
+    return { shouldSend: true, reason: "first_record", change: null };
   }
 
-  // Send alert if price dropped from previous day
-  if (previousPrice !== null && currentPrice < previousPrice) {
-    return true;
+  const change = currentPpl - previousPpl;
+  const absChange = Math.abs(change);
+
+  // Alert if ppl changed by more than threshold (default 5p)
+  if (absChange > pplChangeThreshold) {
+    const direction = change < 0 ? "dropped" : "increased";
+    return {
+      shouldSend: true,
+      reason: `ppl_${direction}_${absChange.toFixed(1)}p`,
+      change
+    };
   }
 
-  return false;
+  return { shouldSend: false, reason: "no_significant_change", change };
 }

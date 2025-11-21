@@ -15,9 +15,11 @@ import {
   BarChart3,
   Calendar,
   Truck,
+  Award,
+  Trophy,
 } from "lucide-react";
 import StatsCard from "./StatsCard";
-import { OilPrice } from "@/lib/schema";
+import { OilPrice, SupplierData } from "@/lib/schema";
 
 interface DashboardProps {
   priceHistory: OilPrice[];
@@ -49,6 +51,14 @@ export default function Dashboard({
   const priceVsAverage = currentPrice - averagePrice;
   const trend = priceVsAverage < 0 ? "down" : priceVsAverage > 0 ? "up" : "neutral";
 
+  // Get top suppliers from the most recent record
+  const latestRecord = priceHistory[0];
+  const suppliersRaw = (latestRecord?.suppliersRaw as SupplierData[]) || [];
+  const topSuppliers = [...suppliersRaw]
+    .sort((a, b) => a.price500L - b.price500L)
+    .slice(0, 10);
+  const lowestPrice = topSuppliers.length > 0 ? topSuppliers[0].price500L : 0;
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
@@ -75,6 +85,84 @@ export default function Dashboard({
           icon={BarChart3}
         />
       </div>
+
+      {/* Today's Best Prices */}
+      {topSuppliers.length > 0 && (
+        <div className="rounded-xl bg-slate-800/50 p-6 shadow-lg border border-slate-700/50">
+          <h2 className="mb-4 text-lg font-semibold text-white flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-amber-400" />
+            Today&apos;s Best Prices
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-700">
+                  <th className="py-3 px-4 text-left text-sm font-medium text-slate-400">
+                    Rank
+                  </th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-slate-400">
+                    Supplier
+                  </th>
+                  <th className="py-3 px-4 text-right text-sm font-medium text-slate-400">
+                    Price (500L)
+                  </th>
+                  <th className="py-3 px-4 text-right text-sm font-medium text-slate-400">
+                    PPL
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {topSuppliers.map((supplier, index) => {
+                  const isCheapest = supplier.price500L === lowestPrice;
+                  return (
+                    <tr
+                      key={`${supplier.name}-${index}`}
+                      className={`border-b border-slate-700/50 transition-colors ${
+                        isCheapest
+                          ? "bg-green-900/20 hover:bg-green-900/30"
+                          : "hover:bg-slate-700/30"
+                      }`}
+                    >
+                      <td className="py-3 px-4 text-sm text-slate-300">
+                        <div className="flex items-center gap-2">
+                          {index === 0 ? (
+                            <Award className="h-4 w-4 text-amber-400" />
+                          ) : (
+                            <span className="w-4 text-center text-slate-500">
+                              {index + 1}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Truck className="h-4 w-4 text-slate-500" />
+                          <span className={isCheapest ? "text-green-400 font-medium" : "text-slate-300"}>
+                            {supplier.name}
+                          </span>
+                          {isCheapest && (
+                            <span className="inline-flex items-center rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400 border border-green-500/30">
+                              Best Price
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className={`py-3 px-4 text-sm text-right font-medium ${
+                        isCheapest ? "text-green-400" : "text-slate-300"
+                      }`}>
+                        £{supplier.price500L.toFixed(2)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-right text-slate-400">
+                        {supplier.ppl500L.toFixed(2)}p
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Price Chart */}
       <div className="rounded-xl bg-slate-800/50 p-6 shadow-lg border border-slate-700/50">
@@ -144,11 +232,11 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* Recent Quotes Table */}
+      {/* Price History Table */}
       <div className="rounded-xl bg-slate-800/50 p-6 shadow-lg border border-slate-700/50">
         <h2 className="mb-4 text-lg font-semibold text-white flex items-center gap-2">
           <Calendar className="h-5 w-5 text-slate-400" />
-          Recent Quotes
+          Price History
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full">

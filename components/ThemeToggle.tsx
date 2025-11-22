@@ -30,20 +30,24 @@ export function ThemeToggle() {
   // Don't render anything until mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <div className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700" />
+      <div className="w-9 h-9 rounded-lg bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
     );
   }
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-colors"
+      className={`p-2 rounded-lg border transition-colors ${
+        theme === "dark"
+          ? "bg-slate-800 border-slate-700 hover:bg-slate-700"
+          : "bg-white border-slate-300 hover:bg-slate-100"
+      }`}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
       {theme === "dark" ? (
         <Sun className="w-4 h-4 text-amber-400" />
       ) : (
-        <Moon className="w-4 h-4 text-slate-400" />
+        <Moon className="w-4 h-4 text-slate-600" />
       )}
     </button>
   );

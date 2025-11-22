@@ -45,7 +45,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192.svg" />
       </head>
       <body
-        className={`${inter.variable} font-sans antialiased bg-slate-950 dark:bg-slate-950 text-slate-100 dark:text-slate-100`}
+        className={`${inter.variable} font-sans antialiased`}
       >
         <ThemeProvider>{children}</ThemeProvider>
       </body>

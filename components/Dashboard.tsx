@@ -49,7 +49,7 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
   if (!hasEnoughData(data.length, 2)) {
     return (
       <div className="w-20 h-6 flex items-center">
-        <span className="text-[10px] text-slate-500">Collecting...</span>
+        <span className="text-[10px] text-[var(--foreground-subtle)]">Collecting...</span>
       </div>
     );
   }
@@ -82,10 +82,10 @@ function CorrelationGauge({ value }: { value: number | null }) {
   if (value === null) {
     return (
       <div className="flex flex-col items-center justify-center h-full py-4">
-        <div className="w-20 h-20 rounded-full border-4 border-slate-700 flex items-center justify-center">
-          <Clock className="w-6 h-6 text-slate-600" />
+        <div className="w-20 h-20 rounded-full border-4 border-[var(--border)] flex items-center justify-center">
+          <Clock className="w-6 h-6 text-[var(--foreground-subtle)]" />
         </div>
-        <p className="text-xs text-slate-500 mt-3 text-center">
+        <p className="text-xs text-[var(--foreground-subtle)] mt-3 text-center">
           Need more data<br />for correlation
         </p>
       </div>
@@ -104,9 +104,8 @@ function CorrelationGauge({ value }: { value: number | null }) {
           cy="40"
           r="36"
           fill="none"
-          stroke="currentColor"
+          stroke="var(--border)"
           strokeWidth="6"
-          className="text-slate-700"
         />
         <circle
           cx="40"
@@ -128,7 +127,7 @@ function CorrelationGauge({ value }: { value: number | null }) {
         </defs>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-xl font-bold text-white">{percentage.toFixed(0)}%</span>
+        <span className="text-xl font-bold text-[var(--foreground)]">{percentage.toFixed(0)}%</span>
       </div>
     </div>
   );
@@ -158,11 +157,11 @@ function PriceGauge({
           style={{ left: `${avgPosition}%` }}
         />
         <div
-          className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-lg border-2 border-emerald-400 transition-all duration-500"
+          className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-emerald-400 shadow-lg border-2 border-emerald-300 transition-all duration-500"
           style={{ left: `calc(${position}% - 6px)` }}
         />
       </div>
-      <div className="flex justify-between mt-1.5 text-[10px] text-slate-500">
+      <div className="flex justify-between mt-1.5 text-[10px] text-[var(--foreground-subtle)]">
         <span>£{low.toFixed(0)}</span>
         <span>£{high.toFixed(0)}</span>
       </div>
@@ -185,7 +184,7 @@ function DateRangeSelector({
   ];
 
   return (
-    <div className="flex gap-1 p-1 rounded-lg bg-slate-800/50 border border-slate-700/50">
+    <div className="flex gap-1 p-1 rounded-lg bg-[var(--surface-2)] border border-[var(--border)]">
       {options.map((opt) => (
         <button
           key={opt.value}
@@ -193,8 +192,8 @@ function DateRangeSelector({
           className={cn(
             "px-3 py-1 text-xs font-medium rounded-md transition-all",
             value === opt.value
-              ? "bg-slate-700 text-white"
-              : "text-slate-400 hover:text-slate-300"
+              ? "bg-[var(--surface-3)] text-[var(--foreground)]"
+              : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
           )}
         >
           {opt.label}
@@ -336,16 +335,16 @@ export default function Dashboard({
           <div className="lg:col-span-5">
             <div className="flex items-center gap-2 mb-2">
               <Flame className="w-4 h-4 text-orange-400" />
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">
+              <span className="text-xs text-[var(--foreground-muted)] uppercase tracking-wider font-medium">
                 Heating Oil · 500L
               </span>
             </div>
             <div className="flex items-baseline gap-2 mb-3">
-              <span className="text-5xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight">
+              <span className="text-5xl sm:text-6xl lg:text-7xl font-black text-[var(--foreground)] tracking-tight">
                 £{currentPrice.toFixed(0)}
               </span>
               <div className="flex flex-col">
-                <span className="text-lg sm:text-xl text-slate-400">
+                <span className="text-lg sm:text-xl text-[var(--foreground-muted)]">
                   .{(currentPrice % 1).toFixed(2).slice(2)}
                 </span>
                 {priceChange !== 0 && (
@@ -365,7 +364,7 @@ export default function Dashboard({
                 )}
               </div>
             </div>
-            <p className="text-slate-400 text-sm mb-4">
+            <p className="text-[var(--foreground-muted)] text-sm mb-4">
               {currentPpl.toFixed(1)}p/L · {latestRecord?.cheapestSupplier}
             </p>
             <PriceGauge
@@ -385,13 +384,14 @@ export default function Dashboard({
           <div className="hidden sm:flex lg:col-span-3 flex-col items-center justify-center">
             <div
               className={cn(
-                "relative p-6 rounded-xl bg-slate-900/50 backdrop-blur border shadow-xl",
+                "relative p-6 rounded-xl border shadow-xl",
+                "bg-[var(--surface-1)]",
                 signal.border,
                 signal.glow
               )}
             >
-              <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700">
-                <span className="text-[9px] text-slate-400 uppercase tracking-widest">
+              <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)]">
+                <span className="text-[9px] text-[var(--foreground-muted)] uppercase tracking-widest">
                   Signal
                 </span>
               </div>
@@ -405,7 +405,7 @@ export default function Dashboard({
                 >
                   {buySignal.signal}
                 </span>
-                <p className="text-[10px] text-slate-400 text-center mt-1.5 max-w-[120px]">
+                <p className="text-[10px] text-[var(--foreground-muted)] text-center mt-1.5 max-w-[120px]">
                   {buySignal.message}
                 </p>
               </div>
@@ -416,14 +416,14 @@ export default function Dashboard({
           <div className="lg:col-span-4">
             <div className="flex items-center gap-2 mb-3">
               <Droplets className="w-4 h-4 text-amber-400" />
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">
+              <span className="text-xs text-[var(--foreground-muted)] uppercase tracking-wider font-medium">
                 Brent Crude
               </span>
             </div>
             {currentCrudeUsd !== null ? (
               <>
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-3xl sm:text-4xl font-bold text-white">
+                  <span className="text-3xl sm:text-4xl font-bold text-[var(--foreground)]">
                     ${currentCrudeUsd.toFixed(2)}
                   </span>
                   {crudeChange !== null && crudeChange !== 0 && (
@@ -442,16 +442,16 @@ export default function Dashboard({
                     </span>
                   )}
                 </div>
-                <p className="text-slate-400 text-xs mb-3">
+                <p className="text-[var(--foreground-muted)] text-xs mb-3">
                   £{currentCrudeGbp?.toFixed(2)}/barrel
                 </p>
                 <div className="flex items-center gap-3">
                   <Sparkline data={crudeSparkline} color="#f59e0b" />
-                  <span className="text-[10px] text-slate-500">14d trend</span>
+                  <span className="text-[10px] text-[var(--foreground-subtle)]">14d trend</span>
                 </div>
               </>
             ) : (
-              <div className="text-slate-500 text-sm">Loading crude data...</div>
+              <div className="text-[var(--foreground-subtle)] text-sm">Loading crude data...</div>
             )}
           </div>
         </div>
@@ -460,22 +460,22 @@ export default function Dashboard({
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Correlation */}
-        <div className="col-span-2 sm:col-span-1 lg:row-span-2 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500/10 via-slate-800/50 to-slate-900/50 border border-purple-500/20 p-4 sm:p-5 flex flex-col items-center justify-center">
-          <span className="text-[10px] text-slate-400 uppercase tracking-widest mb-3">
+        <div className="col-span-2 sm:col-span-1 lg:row-span-2 rounded-xl sm:rounded-2xl bg-purple-500/10 border border-purple-500/20 p-4 sm:p-5 flex flex-col items-center justify-center">
+          <span className="text-[10px] text-[var(--foreground-muted)] uppercase tracking-widest mb-3">
             Correlation
           </span>
           <CorrelationGauge value={correlation} />
           {correlation !== null && (
-            <p className="text-[10px] text-slate-400 text-center mt-3">
+            <p className="text-[10px] text-[var(--foreground-muted)] text-center mt-3">
               {correlation > 0.7 ? "Strong" : correlation > 0.4 ? "Moderate" : "Weak"} link to crude
             </p>
           )}
         </div>
 
         {/* 30-Day Low */}
-        <div className="rounded-xl sm:rounded-2xl bg-slate-800/30 border border-slate-700/50 p-4">
+        <div className="rounded-xl sm:rounded-2xl bg-[var(--surface-1)] border border-[var(--border)] p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Low</span>
+            <span className="text-[10px] text-[var(--foreground-muted)] uppercase tracking-wider">Low</span>
             <TrendingDown className="w-3.5 h-3.5 text-emerald-400" />
           </div>
           <span className="text-2xl font-bold text-emerald-400">£{thirtyDayLow.toFixed(0)}</span>
@@ -485,24 +485,24 @@ export default function Dashboard({
         </div>
 
         {/* 30-Day High */}
-        <div className="rounded-xl sm:rounded-2xl bg-slate-800/30 border border-slate-700/50 p-4">
+        <div className="rounded-xl sm:rounded-2xl bg-[var(--surface-1)] border border-[var(--border)] p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">High</span>
+            <span className="text-[10px] text-[var(--foreground-muted)] uppercase tracking-wider">High</span>
             <TrendingUp className="w-3.5 h-3.5 text-red-400" />
           </div>
           <span className="text-2xl font-bold text-red-400">£{thirtyDayHigh.toFixed(0)}</span>
-          <p className="text-[10px] text-slate-500 mt-2">
+          <p className="text-[10px] text-[var(--foreground-subtle)] mt-2">
             Range: £{(thirtyDayHigh - thirtyDayLow).toFixed(0)}
           </p>
         </div>
 
         {/* Average */}
-        <div className="rounded-xl sm:rounded-2xl bg-slate-800/30 border border-slate-700/50 p-4">
+        <div className="rounded-xl sm:rounded-2xl bg-[var(--surface-1)] border border-[var(--border)] p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Avg</span>
-            <BarChart3 className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-[10px] text-[var(--foreground-muted)] uppercase tracking-wider">Avg</span>
+            <BarChart3 className="w-3.5 h-3.5 text-[var(--foreground-muted)]" />
           </div>
-          <span className="text-2xl font-bold text-white">£{averagePrice.toFixed(0)}</span>
+          <span className="text-2xl font-bold text-[var(--foreground)]">£{averagePrice.toFixed(0)}</span>
           <p
             className={cn(
               "text-[10px] mt-2",
@@ -517,9 +517,9 @@ export default function Dashboard({
 
         {/* Spread */}
         {buySignal.spread !== null && (
-          <div className="rounded-xl sm:rounded-2xl bg-slate-800/30 border border-slate-700/50 p-4">
+          <div className="rounded-xl sm:rounded-2xl bg-[var(--surface-1)] border border-[var(--border)] p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider">Spread</span>
+              <span className="text-[10px] text-[var(--foreground-muted)] uppercase tracking-wider">Spread</span>
               <Target className="w-3.5 h-3.5 text-purple-400" />
             </div>
             <span
@@ -529,13 +529,13 @@ export default function Dashboard({
                   ? "text-emerald-400"
                   : buySignal.spread > 0
                     ? "text-red-400"
-                    : "text-white"
+                    : "text-[var(--foreground)]"
               )}
             >
               {buySignal.spread > 0 ? "+" : ""}
               {buySignal.spread}%
             </span>
-            <p className="text-[10px] text-slate-500 mt-2">vs expected</p>
+            <p className="text-[10px] text-[var(--foreground-subtle)] mt-2">vs expected</p>
           </div>
         )}
       </div>
@@ -543,8 +543,8 @@ export default function Dashboard({
       {/* Suppliers */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm sm:text-base font-semibold text-white">Best Prices Today</h2>
-          <span className="text-[10px] text-slate-400">{topSuppliers.length} suppliers</span>
+          <h2 className="text-sm sm:text-base font-semibold text-[var(--foreground)]">Best Prices Today</h2>
+          <span className="text-[10px] text-[var(--foreground-muted)]">{topSuppliers.length} suppliers</span>
         </div>
         <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           {topSuppliers.map((supplier, index) => (
@@ -556,34 +556,34 @@ export default function Dashboard({
               className={cn(
                 "flex-shrink-0 snap-start w-56 sm:w-64 rounded-lg sm:rounded-xl p-3 sm:p-4 border transition-all group",
                 index === 0
-                  ? "bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 border-emerald-500/30"
-                  : "bg-slate-800/30 border-slate-700/50 hover:border-slate-600"
+                  ? "bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/50"
+                  : "bg-[var(--surface-1)] border-[var(--border)] hover:border-[var(--foreground-subtle)]"
               )}
             >
               <div className="flex items-start justify-between mb-2">
                 <span
                   className={cn(
                     "text-[10px] font-medium uppercase tracking-wider",
-                    index === 0 ? "text-emerald-400" : "text-slate-400"
+                    index === 0 ? "text-emerald-400" : "text-[var(--foreground-muted)]"
                   )}
                 >
                   #{index + 1}
                 </span>
-                <ExternalLink className="w-3 h-3 text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ExternalLink className="w-3 h-3 text-[var(--foreground-subtle)] opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              <h3 className="font-medium text-white text-sm mb-1 truncate">
+              <h3 className="font-medium text-[var(--foreground)] text-sm mb-1 truncate">
                 {supplier.name}
               </h3>
               <div className="flex items-baseline gap-2">
                 <span
                   className={cn(
                     "text-xl font-bold",
-                    index === 0 ? "text-emerald-400" : "text-white"
+                    index === 0 ? "text-emerald-400" : "text-[var(--foreground)]"
                   )}
                 >
                   £{supplier.price500L.toFixed(0)}
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-[var(--foreground-muted)]">
                   {supplier.ppl500L.toFixed(1)}p/L
                 </span>
               </div>
@@ -593,21 +593,21 @@ export default function Dashboard({
       </div>
 
       {/* Chart */}
-      <div className="rounded-xl sm:rounded-2xl bg-slate-800/30 border border-slate-700/50 p-4 sm:p-6">
+      <div className="rounded-xl sm:rounded-2xl bg-[var(--surface-1)] border border-[var(--border)] p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <h2 className="text-sm sm:text-base font-semibold text-white">Price History</h2>
-            <p className="text-xs text-slate-400">Heating oil vs Brent crude</p>
+            <h2 className="text-sm sm:text-base font-semibold text-[var(--foreground)]">Price History</h2>
+            <p className="text-xs text-[var(--foreground-muted)]">Heating oil vs Brent crude</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-3 text-[10px]">
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-slate-400">Oil</span>
+                <span className="text-[var(--foreground-muted)]">Oil</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-amber-500" />
-                <span className="text-slate-400">Crude</span>
+                <span className="text-[var(--foreground-muted)]">Crude</span>
               </div>
             </div>
             <DateRangeSelector value={dateRange} onChange={setDateRange} />
@@ -695,12 +695,12 @@ export default function Dashboard({
       </div>
 
       {/* History */}
-      <div className="rounded-xl sm:rounded-2xl bg-slate-800/30 border border-slate-700/50 overflow-hidden">
-        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-700/50 flex items-center justify-between">
-          <h2 className="text-sm sm:text-base font-semibold text-white">Recent History</h2>
+      <div className="rounded-xl sm:rounded-2xl bg-[var(--surface-1)] border border-[var(--border)] overflow-hidden">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-[var(--border)] flex items-center justify-between">
+          <h2 className="text-sm sm:text-base font-semibold text-[var(--foreground)]">Recent History</h2>
           <PriceAlert currentPrice={currentPrice} />
         </div>
-        <div className="divide-y divide-slate-700/30">
+        <div className="divide-y divide-[var(--border-subtle)]">
           {priceHistory.slice(0, 7).map((record, index) => {
             const prevRecord = priceHistory[index + 1];
             const diff = prevRecord
@@ -709,16 +709,16 @@ export default function Dashboard({
             return (
               <div
                 key={record.id}
-                className="flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 hover:bg-slate-700/20 transition-colors"
+                className="flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 hover:bg-[var(--surface-2)] transition-colors"
               >
                 <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                  <span className="text-xs sm:text-sm text-slate-400 w-16 sm:w-20 flex-shrink-0">
+                  <span className="text-xs sm:text-sm text-[var(--foreground-muted)] w-16 sm:w-20 flex-shrink-0">
                     {new Date(record.recordedAt!).toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",
                     })}
                   </span>
-                  <span className="text-xs sm:text-sm text-slate-300 truncate">
+                  <span className="text-xs sm:text-sm text-[var(--foreground)] truncate">
                     {record.cheapestSupplier}
                   </span>
                 </div>
@@ -729,7 +729,7 @@ export default function Dashboard({
                     </span>
                   )}
                   <div className="flex items-center gap-1.5">
-                    <span className="text-sm sm:text-base font-semibold text-white">
+                    <span className="text-sm sm:text-base font-semibold text-[var(--foreground)]">
                       £{parseFloat(record.cheapestPrice500L).toFixed(0)}
                     </span>
                     {diff !== 0 && (
@@ -747,7 +747,7 @@ export default function Dashboard({
                       </span>
                     )}
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-600 hidden sm:block" />
+                  <ChevronRight className="w-4 h-4 text-[var(--foreground-subtle)] hidden sm:block" />
                 </div>
               </div>
             );
@@ -757,7 +757,7 @@ export default function Dashboard({
 
       {/* Footer */}
       <div className="text-center py-4">
-        <p className="text-[10px] text-slate-500">
+        <p className="text-[10px] text-[var(--foreground-subtle)]">
           Data from cheapestoil.co.uk · Updated daily at 8am
         </p>
       </div>

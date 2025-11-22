@@ -59,74 +59,78 @@ html {
   outline-offset: 2px;
 }
 
-/* Light mode overrides */
-.light {
-  /* Override slate backgrounds */
-  .bg-slate-800\/30,
-  .bg-slate-800\/50 {
-    background-color: rgb(241 245 249 / 0.5) !important;
-  }
+/* Light mode overrides - using descendant selectors */
+html.light .bg-slate-800\/30,
+html.light .bg-slate-800\/50 {
+  background-color: rgb(241 245 249 / 0.7) !important;
+}
 
-  .bg-slate-900\/50,
-  .bg-slate-900\/80 {
-    background-color: rgb(255 255 255 / 0.8) !important;
-  }
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/80 {
+  background-color: rgb(255 255 255 / 0.9) !important;
+}
 
-  .bg-slate-800 {
-    background-color: #e2e8f0 !important;
-  }
+html.light .bg-slate-800 {
+  background-color: #e2e8f0 !important;
+}
 
-  /* Text colors */
-  .text-white {
-    color: #0f172a !important;
-  }
+html.light .text-white {
+  color: #0f172a !important;
+}
 
-  .text-slate-100 {
-    color: #1e293b !important;
-  }
+html.light .text-slate-100 {
+  color: #1e293b !important;
+}
 
-  .text-slate-300 {
-    color: #334155 !important;
-  }
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
 
-  .text-slate-400 {
-    color: #64748b !important;
-  }
+html.light .text-slate-400 {
+  color: #64748b !important;
+}
 
-  .text-slate-500 {
-    color: #64748b !important;
-  }
+html.light .text-slate-500 {
+  color: #64748b !important;
+}
 
-  .text-slate-600 {
-    color: #475569 !important;
-  }
+html.light .text-slate-600 {
+  color: #475569 !important;
+}
 
-  /* Border colors */
-  .border-slate-700,
-  .border-slate-700\/50 {
-    border-color: rgb(203 213 225 / 0.5) !important;
-  }
+html.light .border-slate-700,
+html.light .border-slate-700\/50 {
+  border-color: rgb(203 213 225 / 0.5) !important;
+}
 
-  .border-slate-600 {
-    border-color: #cbd5e1 !important;
-  }
+html.light .border-slate-600 {
+  border-color: #cbd5e1 !important;
+}
 
-  /* Divide colors */
-  .divide-slate-700\/30 > * + * {
-    border-color: rgb(203 213 225 / 0.3) !important;
-  }
+html.light .divide-slate-700\/30 > * + * {
+  border-color: rgb(203 213 225 / 0.3) !important;
+}
 
-  /* Hover states */
-  .hover\:bg-slate-700:hover {
-    background-color: #cbd5e1 !important;
-  }
+html.light .hover\:bg-slate-700:hover {
+  background-color: #cbd5e1 !important;
+}
 
-  .hover\:bg-slate-700\/20:hover {
-    background-color: rgb(203 213 225 / 0.3) !important;
-  }
+html.light .hover\:bg-slate-700\/20:hover {
+  background-color: rgb(203 213 225 / 0.3) !important;
+}
 
-  /* SVG strokes for charts */
-  .recharts-cartesian-grid line {
-    stroke: #e2e8f0 !important;
-  }
+html.light .recharts-cartesian-grid line {
+  stroke: #e2e8f0 !important;
+}
+
+/* Gradient overrides for light mode */
+html.light .from-emerald-500\/20,
+html.light .from-amber-500\/20,
+html.light .from-red-500\/20,
+html.light .from-purple-500\/10 {
+  --tw-gradient-from: rgb(255 255 255 / 0.5) !important;
+}
+
+html.light .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, rgb(241 245 249 / 0.8), transparent) !important;
 }

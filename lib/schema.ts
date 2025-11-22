@@ -20,6 +20,10 @@ export const oilPrices = pgTable("oil_prices", {
   cheapestPpl: numeric("cheapest_ppl", { precision: 10, scale: 2 }).notNull(),
   suppliersRaw: jsonb("suppliers_raw").notNull(),
   scrapeSuccess: boolean("scrape_success").default(true),
+  // Crude oil data (Brent Crude)
+  brentCrudeUsd: numeric("brent_crude_usd", { precision: 10, scale: 2 }),
+  brentCrudeGbp: numeric("brent_crude_gbp", { precision: 10, scale: 2 }),
+  brentCrudeChange: numeric("brent_crude_change", { precision: 10, scale: 2 }),
 });
 
 export type OilPrice = typeof oilPrices.$inferSelect;

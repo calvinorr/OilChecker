@@ -4,6 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { oilPrices, SupplierData } from "@/lib/schema";
 import { sendPriceAlert, shouldSendAlert } from "@/lib/email";
+import { fetchBrentCrudePrice } from "@/lib/crude-oil";
 
 export const dynamic = "force-dynamic";
 
@@ -136,6 +137,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Fetch heating oil prices and crude oil prices in parallel
+    const [heatingOilData, crudeOilData] = await Promise.all([
+      scrapeOilPrices(),
+      fetchBrentCrudePrice(),
+    ]);
+
     const {
       suppliers,
       avgPrice500L,
@@ -143,7 +150,7 @@ export async function GET(request: NextRequest) {
       cheapestSupplier,
       avgPpl,
       cheapestPpl,
-    } = await scrapeOilPrices();
+    } = heatingOilData;
 
     // Fetch previous record to compare prices
     const [previousRecord] = await db
@@ -160,7 +167,7 @@ export async function GET(request: NextRequest) {
       ? parseFloat(previousRecord.cheapestPpl)
       : null;
 
-    // Insert into database
+    // Insert into database (including crude oil data if available)
     const [inserted] = await db
       .insert(oilPrices)
       .values({
@@ -172,6 +179,9 @@ export async function GET(request: NextRequest) {
         cheapestPpl: cheapestPpl.toString(),
         suppliersRaw: suppliers,
         scrapeSuccess: true,
+        brentCrudeUsd: crudeOilData?.price?.toString() || null,
+        brentCrudeGbp: crudeOilData?.priceGBP?.toString() || null,
+        brentCrudeChange: crudeOilData?.change?.toString() || null,
       })
       .returning();
 
@@ -237,6 +247,14 @@ export async function GET(request: NextRequest) {
         previousPpl,
         pplChange: alertCheck.change,
         emailAlert: emailStatus,
+        crudeOil: crudeOilData
+          ? {
+              priceUsd: crudeOilData.price,
+              priceGbp: crudeOilData.priceGBP,
+              change: crudeOilData.change,
+              changePercent: crudeOilData.changePercent,
+            }
+          : null,
       },
     });
   } catch (error) {

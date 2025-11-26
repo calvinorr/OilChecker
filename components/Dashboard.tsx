@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   LineChart,
   Line,
@@ -204,12 +204,48 @@ function DateRangeSelector({
 }
 
 export default function Dashboard({
-  priceHistory,
-  currentPrice,
-  thirtyDayLow,
-  averagePrice,
+  priceHistory: initialPriceHistory,
+  currentPrice: initialCurrentPrice,
+  thirtyDayLow: initialThirtyDayLow,
+  averagePrice: initialAveragePrice,
 }: DashboardProps) {
   const [dateRange, setDateRange] = useState<DateRange>("30d");
+  const [priceHistory, setPriceHistory] = useState(initialPriceHistory);
+  const [currentPrice, setCurrentPrice] = useState(initialCurrentPrice);
+  const [thirtyDayLow, setThirtyDayLow] = useState(initialThirtyDayLow);
+  const [averagePrice, setAveragePrice] = useState(initialAveragePrice);
+
+  // Silently fetch new data
+  const fetchLatestData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/prices");
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.priceHistory?.length > 0) {
+        setPriceHistory(data.priceHistory);
+        setCurrentPrice(data.stats.currentPrice);
+        setThirtyDayLow(data.stats.thirtyDayLow);
+        setAveragePrice(data.stats.averagePrice);
+      }
+    } catch {
+      // Silently fail - will retry next interval
+    }
+  }, []);
+
+  // Auto-refresh daily to pick up new data after 8am UTC cron
+  useEffect(() => {
+    const loadDate = new Date().toDateString();
+
+    const checkForNewDay = () => {
+      if (new Date().toDateString() !== loadDate) {
+        fetchLatestData();
+      }
+    };
+
+    // Check every hour
+    const interval = setInterval(checkForNewDay, 60 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [fetchLatestData]);
 
   // Filter data by date range
   const filteredHistory = useMemo(() => {

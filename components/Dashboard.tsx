@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   LineChart,
   Line,
@@ -209,7 +210,24 @@ export default function Dashboard({
   thirtyDayLow,
   averagePrice,
 }: DashboardProps) {
+  const router = useRouter();
   const [dateRange, setDateRange] = useState<DateRange>("30d");
+
+  // Auto-refresh daily to pick up new data after 8am UTC cron
+  useEffect(() => {
+    const loadDate = new Date().toDateString();
+
+    const checkForNewDay = () => {
+      const now = new Date();
+      if (now.toDateString() !== loadDate) {
+        router.refresh();
+      }
+    };
+
+    // Check every hour
+    const interval = setInterval(checkForNewDay, 60 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [router]);
 
   // Filter data by date range
   const filteredHistory = useMemo(() => {

@@ -2,6 +2,7 @@ import { getPriceHistory } from "@/lib/db";
 import Dashboard from "@/components/Dashboard";
 import { Flame } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { RefreshButton } from "@/components/RefreshButton";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -76,6 +77,7 @@ export default async function Home() {
                   </span>
                 </p>
               </div>
+              <RefreshButton />
               <ThemeToggle />
             </div>
           </div>

@@ -36,14 +36,18 @@ export async function fetchBrentCrudePrice(): Promise<CrudeOilData | null> {
       "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?interval=1d&range=1d",
       {
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; OilPriceTracker/1.0)",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "application/json",
+          "Accept-Language": "en-US,en;q=0.9",
         },
+        cache: "no-store",
       }
     );
 
     if (!response.ok) {
       console.error(`Yahoo Finance API error: ${response.status}`);
-      return null;
+      // Try fallback API
+      return await fetchBrentCrudeFallback();
     }
 
     const data: YahooQuoteResponse = await response.json();
@@ -83,8 +87,10 @@ async function fetchGBPUSDRate(): Promise<number | null> {
       "https://query1.finance.yahoo.com/v8/finance/chart/GBPUSD=X?interval=1d&range=1d",
       {
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; OilPriceTracker/1.0)",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "application/json",
         },
+        cache: "no-store",
       }
     );
 
@@ -95,6 +101,30 @@ async function fetchGBPUSDRate(): Promise<number | null> {
 
     return data.chart.result[0].meta.regularMarketPrice;
   } catch {
+    return null;
+  }
+}
+
+// Fallback: fetch from alternative free API
+async function fetchBrentCrudeFallback(): Promise<CrudeOilData | null> {
+  try {
+    // Try exchangerate.host commodities endpoint (free, no API key required)
+    const response = await fetch(
+      "https://api.exchangerate.host/latest?base=USD&symbols=GBP&source=ecb",
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      console.error("Fallback API also failed");
+      return null;
+    }
+
+    // We got exchange rate but can't get crude price from a free API
+    // Return null to indicate we couldn't get real crude data
+    console.log("Fallback API reached but no crude price available");
+    return null;
+  } catch (error) {
+    console.error("Fallback crude fetch failed:", error);
     return null;
   }
 }

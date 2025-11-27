@@ -400,8 +400,12 @@ export default function Dashboard({
                 )}
               </div>
             </div>
-            <p className="text-[var(--foreground-muted)] text-sm mb-4">
+            <p className="text-[var(--foreground-muted)] text-sm mb-2">
               {currentPpl.toFixed(1)}p/L · {latestRecord?.cheapestSupplier}
+            </p>
+            <p className="text-[10px] text-[var(--foreground-subtle)] mb-4">
+              Updated {latestRecord?.recordedAt ? new Date(latestRecord.recordedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "N/A"}{" "}
+              {latestRecord?.recordedAt ? new Date(latestRecord.recordedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : ""}
             </p>
             <PriceGauge
               current={currentPrice}
@@ -462,7 +466,7 @@ export default function Dashboard({
                   <span className="text-3xl sm:text-4xl font-bold text-[var(--foreground)]">
                     ${currentCrudeUsd.toFixed(2)}
                   </span>
-                  {crudeChange !== null && crudeChange !== 0 && (
+                  {crudeChange !== null && !isNaN(crudeChange) && crudeChange !== 0 && (
                     <span
                       className={cn(
                         "flex items-center gap-0.5 text-xs",
@@ -478,8 +482,11 @@ export default function Dashboard({
                     </span>
                   )}
                 </div>
-                <p className="text-[var(--foreground-muted)] text-xs mb-3">
+                <p className="text-[var(--foreground-muted)] text-xs mb-1">
                   £{currentCrudeGbp?.toFixed(2)}/barrel
+                </p>
+                <p className="text-[10px] text-[var(--foreground-subtle)] mb-3">
+                  Updated {latestRecord?.recordedAt ? new Date(latestRecord.recordedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "N/A"}
                 </p>
                 <div className="flex items-center gap-3">
                   <Sparkline data={crudeSparkline} color="#f59e0b" />
@@ -487,7 +494,7 @@ export default function Dashboard({
                 </div>
               </>
             ) : (
-              <div className="text-[var(--foreground-subtle)] text-sm">Loading crude data...</div>
+              <div className="text-[var(--foreground-subtle)] text-sm">No crude data available</div>
             )}
           </div>
         </div>

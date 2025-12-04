@@ -215,7 +215,35 @@ export default function Dashboard({
   const [thirtyDayLow, setThirtyDayLow] = useState(initialThirtyDayLow);
   const [averagePrice, setAveragePrice] = useState(initialAveragePrice);
 
-  // Silently fetch new data
+  // Check if data is stale (older than today and past 9am UTC when cron should have run)
+  const isDataStale = useCallback(() => {
+    if (priceHistory.length === 0) return true;
+
+    const latestDate = new Date(priceHistory[0].recordedAt!);
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Data is stale if:
+    // 1. Latest record is from before today AND
+    // 2. It's past 9am UTC (1 hour after cron should run at 8am UTC)
+    const isOldData = latestDate < todayStart;
+    const isPastCronTime = now.getUTCHours() >= 9;
+
+    return isOldData && isPastCronTime;
+  }, [priceHistory]);
+
+  // Trigger a fresh scrape via the refresh endpoint
+  const triggerRefresh = useCallback(async () => {
+    try {
+      const res = await fetch("/api/refresh", { method: "POST" });
+      if (!res.ok) return false;
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Silently fetch new data from database
   const fetchLatestData = useCallback(async () => {
     try {
       const res = await fetch("/api/prices");
@@ -232,20 +260,41 @@ export default function Dashboard({
     }
   }, []);
 
-  // Auto-refresh daily to pick up new data after 8am UTC cron
+  // Auto-refresh on mount if data is stale, and daily thereafter
   useEffect(() => {
     const loadDate = new Date().toDateString();
+    let hasTriggeredRefresh = false;
+
+    // Check on mount if data is stale and trigger refresh
+    const checkAndRefreshIfStale = async () => {
+      if (isDataStale() && !hasTriggeredRefresh) {
+        hasTriggeredRefresh = true;
+        const refreshed = await triggerRefresh();
+        if (refreshed) {
+          // Wait a moment for the scrape to complete, then fetch updated data
+          setTimeout(fetchLatestData, 2000);
+        }
+      }
+    };
+
+    // Run immediately on mount
+    checkAndRefreshIfStale();
 
     const checkForNewDay = () => {
       if (new Date().toDateString() !== loadDate) {
-        fetchLatestData();
+        // New day - trigger refresh
+        triggerRefresh().then((refreshed) => {
+          if (refreshed) {
+            setTimeout(fetchLatestData, 2000);
+          }
+        });
       }
     };
 
     // Check every hour
     const interval = setInterval(checkForNewDay, 60 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [fetchLatestData]);
+  }, [fetchLatestData, isDataStale, triggerRefresh]);
 
   // Filter data by date range
   const filteredHistory = useMemo(() => {

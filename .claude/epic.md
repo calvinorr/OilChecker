@@ -32,7 +32,7 @@ Maintain a clean, performant Oil Price Tracker that provides reliable daily pric
 | 03 | [Refactor: Split Dashboard Component](stories/03-split-dashboard.md) | P1 | ✅ complete |
 | 04 | [Fix: Theme State Duplication](stories/04-fix-theme-state.md) | P1 | ✅ complete |
 | 05 | [Database: Add Indexes & Migrations](stories/05-database-indexes.md) | P1 | ✅ complete |
-| 06 | [Feature: TBD - User Requested](stories/06-feature-tbd.md) | P2 | not-started |
+| 06 | [Feature: Purchase Tracker](stories/06-purchase-tracker.md) | P1 | ✅ complete |
 
 ## Out of Scope
 

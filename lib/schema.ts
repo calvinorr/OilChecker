@@ -37,3 +37,20 @@ export interface SupplierData {
   price500L: number;
   ppl500L: number;
 }
+
+// User purchases table - track actual oil purchases
+export const purchases = pgTable("purchases", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  purchaseDate: timestamp("purchase_date", { withTimezone: true }).notNull(),
+  litres: numeric("litres", { precision: 10, scale: 2 }).notNull(),
+  totalPrice: numeric("total_price", { precision: 10, scale: 2 }).notNull(),
+  ppl: numeric("ppl", { precision: 10, scale: 2 }).notNull(), // calculated: (totalPrice / litres) * 100
+  supplier: text("supplier").default("Finlay Fuels"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+}, (table) => ({
+  purchaseDateIdx: index("idx_purchases_date").on(table.purchaseDate.desc()),
+}));
+
+export type Purchase = typeof purchases.$inferSelect;
+export type NewPurchase = typeof purchases.$inferInsert;

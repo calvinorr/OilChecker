@@ -4,11 +4,11 @@
 **Status:** complete
 **Priority:** P1
 **Created:** 2025-12-09
-**Updated:** 2025-12-09 13:10
+**Updated:** 2025-12-09 15:45
 
 ## Objective
 
-Break the 767-line Dashboard.tsx into smaller, focused components for better maintainability and testability.
+Break the Dashboard.tsx into smaller, focused components for better maintainability and testability.
 
 ## Acceptance Criteria
 
@@ -16,7 +16,7 @@ Break the 767-line Dashboard.tsx into smaller, focused components for better mai
 - [x] Extract `CorrelationGauge.tsx` - the circular correlation display
 - [x] Extract `Sparkline.tsx` - mini chart component
 - [x] Extract `DateRangeSelector.tsx` - time range picker
-- [x] Extract `SupplierCard.tsx` - individual supplier display
+- [x] Extract `SuppliersList.tsx` - supplier cards display (renamed from SupplierCard)
 - [x] Dashboard.tsx reduced to <300 lines (composition only)
 - [x] All extracted components properly typed with TypeScript
 - [x] No visual or functional changes to the UI
@@ -24,43 +24,41 @@ Break the 767-line Dashboard.tsx into smaller, focused components for better mai
 
 ## Implementation Notes
 
-**Component extraction approach:**
-1. Identify self-contained UI sections
-2. Extract with props interface
-3. Keep state management in Dashboard where needed
-4. Pass callbacks for interactivity
+**Completed (2025-12-09):**
 
-**Final file structure:**
-```
-components/
-├── Dashboard.tsx           # Main composition (191 lines)
-├── dashboard/
-│   ├── PriceGauge.tsx      (32 lines)
-│   ├── CorrelationGauge.tsx (63 lines)
-│   ├── Sparkline.tsx        (42 lines)
-│   ├── DateRangeSelector.tsx (36 lines)
-│   ├── SupplierCard.tsx     (57 lines)
-│   ├── HeroSection.tsx      (221 lines)
-│   ├── StatsGrid.tsx        (126 lines)
-│   ├── PriceChart.tsx       (145 lines)
-│   └── PriceHistoryTable.tsx (83 lines)
-```
+Extracted 9 components from the 859-line Dashboard:
+
+| Component | Lines | Purpose |
+|-----------|-------|---------|
+| `Sparkline.tsx` | 40 | Mini area chart for trends |
+| `CorrelationGauge.tsx` | 60 | Circular correlation display |
+| `PriceGauge.tsx` | 35 | Linear price range indicator |
+| `DateRangeSelector.tsx` | 35 | 7D/14D/30D toggle |
+| `HeroSection.tsx` | 195 | Main price + signal + crude |
+| `StatsGrid.tsx` | 100 | Correlation + stat cards |
+| `SuppliersList.tsx` | 60 | Horizontal supplier cards |
+| `PriceChart.tsx` | 110 | Recharts line chart |
+| `PriceHistory.tsx` | 75 | Recent history table |
+
+**Auto-refresh logic preserved:**
+- `isDataStale()`, `triggerRefresh()`, `fetchLatestData()` all remain in Dashboard.tsx
+- Hourly polling and stale data detection unchanged
 
 ## Test Plan
 
 ```bash
-npm run build               # Must pass
-npm run dev                 # Visual regression check
+npm run build               # ✅ Passed
+npm run dev                 # Visual regression check required
 # Verify: All charts render correctly
 # Verify: Date range selector works
 # Verify: Supplier cards display
 # Verify: Theme toggle still works
+# Verify: Auto-refresh still works
 ```
 
 ## Completion Evidence
 
-- Dashboard.tsx lines before: 767
-- Dashboard.tsx lines after: 191 (75% reduction)
-- New components created: 9
+- Dashboard.tsx: 859 → 230 lines (73% reduction)
+- Components created: 9
 - Build: ✅ Passed
-- Commit: `e350cdc`
+- TypeScript: ✅ No errors

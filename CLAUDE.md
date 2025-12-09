@@ -13,6 +13,11 @@ npm install        # Install dependencies
 npm run dev        # Start Next.js dev server at http://localhost:3000
 npm run build      # Production build
 npm run lint       # Run ESLint
+
+# Database migrations
+npm run db:generate  # Generate migration files from schema changes
+npm run db:migrate   # Apply migrations to database
+npm run db:studio    # Open Drizzle Studio GUI
 ```
 
 ## Architecture
@@ -32,6 +37,9 @@ lib/
 ├── db.ts               # Neon database connection + queries
 ├── schema.ts           # Drizzle ORM schema
 └── email.ts            # Nodemailer email alerts
+
+drizzle/
+└── *.sql               # Database migration files
 ```
 
 ## Stack
@@ -65,3 +73,30 @@ PRICE_THRESHOLD=300     # Alert if price below this
 - 2-space indentation
 - PascalCase for components, camelCase for functions
 - Conventional Commits: `feat:`, `fix:`, `chore:`
+
+## Database Migration Workflow
+
+### Making Schema Changes
+
+1. Edit `lib/schema.ts` with your changes
+2. Generate migration: `npm run db:generate`
+3. Review the generated SQL in `drizzle/*.sql`
+4. Apply to database: `npm run db:migrate`
+
+### Current Indexes
+
+- `idx_oil_prices_recorded_at` - Descending index on `recorded_at` for efficient time-based queries
+
+### Migration Files
+
+Drizzle Kit stores migrations in `drizzle/` directory:
+- `*.sql` - Migration SQL statements
+- `meta/` - Migration metadata
+
+### Configuration
+
+Database migrations are configured in `drizzle.config.ts`:
+- Schema: `./lib/schema.ts`
+- Output: `./drizzle`
+- Dialect: PostgreSQL
+- Connection: Uses `DATABASE_URL` environment variable

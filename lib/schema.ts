@@ -7,6 +7,7 @@ import {
   integer,
   boolean,
   jsonb,
+  index,
 } from "drizzle-orm/pg-core";
 
 export const oilPrices = pgTable("oil_prices", {
@@ -24,7 +25,9 @@ export const oilPrices = pgTable("oil_prices", {
   brentCrudeUsd: numeric("brent_crude_usd", { precision: 10, scale: 2 }),
   brentCrudeGbp: numeric("brent_crude_gbp", { precision: 10, scale: 2 }),
   brentCrudeChange: numeric("brent_crude_change", { precision: 10, scale: 2 }),
-});
+}, (table) => ({
+  recordedAtIdx: index("idx_oil_prices_recorded_at").on(table.recordedAt.desc()),
+}));
 
 export type OilPrice = typeof oilPrices.$inferSelect;
 export type NewOilPrice = typeof oilPrices.$inferInsert;

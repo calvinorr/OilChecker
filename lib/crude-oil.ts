@@ -99,45 +99,6 @@ async function fetchGBPUSDRate(): Promise<number | null> {
   }
 }
 
-// Fetch historical Brent Crude prices (for correlation analysis)
-export async function fetchBrentCrudeHistory(
-  days: number = 90
-): Promise<Array<{ date: string; price: number; priceGBP: number }>> {
-  try {
-    const response = await fetch(
-      `https://query1.finance.yahoo.com/v8/finance/chart/BZ=F?interval=1d&range=${days}d`,
-      {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; OilPriceTracker/1.0)",
-        },
-      }
-    );
-
-    if (!response.ok) return [];
-
-    const data: YahooQuoteResponse = await response.json();
-    if (data.chart.error || !data.chart.result?.[0]) return [];
-
-    const result = data.chart.result[0];
-    const timestamps = result.timestamp || [];
-    const closes = result.indicators.quote[0]?.close || [];
-
-    // Get GBP rate for conversion (use current rate as approximation)
-    const gbpRate = (await fetchGBPUSDRate()) || 1.27;
-
-    return timestamps
-      .map((ts, i) => ({
-        date: new Date(ts * 1000).toISOString().split("T")[0],
-        price: Math.round((closes[i] || 0) * 100) / 100,
-        priceGBP: Math.round(((closes[i] || 0) / gbpRate) * 100) / 100,
-      }))
-      .filter((d) => d.price > 0);
-  } catch (error) {
-    console.error("Failed to fetch Brent Crude history:", error);
-    return [];
-  }
-}
-
 // Calculate Pearson correlation coefficient
 export function calculateCorrelation(x: number[], y: number[]): number | null {
   if (x.length !== y.length || x.length < 3) return null;
